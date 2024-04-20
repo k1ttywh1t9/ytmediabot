@@ -17,7 +17,7 @@ async def main():
 
 if __name__ == '__main__':
     try:
-        logging.basicConfig(level=logging.INFO)
+        # logging.basicConfig(level=logging.INFO) # turn it on for debug
         asyncio.run(main())
     except KeyboardInterrupt:
         print('Exit')
