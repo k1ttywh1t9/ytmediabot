@@ -1,21 +1,11 @@
-from aiogram.types import (ReplyKeyboardMarkup, KeyboardButton,
-                           InlineKeyboardMarkup, InlineKeyboardButton)
-
+from aiogram.types import (InlineKeyboardMarkup, InlineKeyboardButton)
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from utils import video_options
 
-async def choice_function(url):
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='video', callback_data=f'video_download {url}'),
-    InlineKeyboardButton(text='audio', callback_data=f'audio_download {url}')],
-    [InlineKeyboardButton(text='audio playlist', callback_data=f'playlist {url}')]])
-    return keyboard
-
-
-
-async def inline_choice_resolution(streams):
-    choice = await video_options(streams)
+async def choice_function(is_playlist):
     keyboard = InlineKeyboardBuilder()
-    for item in choice:
-        keyboard.add(
-            InlineKeyboardButton(text=f'resolution: {item[1]}, format: {item[2]}', callback_data=f'itag {item[0]} mp4'))
-    return keyboard.adjust(2).as_markup()
+    keyboard.button(text='video resolution: 360p', callback_data="video 18")
+    keyboard.button(text='audio', callback_data=f'audio_download')
+    keyboard.button(text='video resolution: 720p', callback_data="video 22")
+    if is_playlist!=-1:
+        keyboard.button(text='audio playlist', callback_data=f'playlist')
+    return keyboard.adjust(2,2).as_markup()

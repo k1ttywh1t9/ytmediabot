@@ -12,22 +12,24 @@ router = Router()
 async def cmd_start(message: Message):
     await message.answer('Hello! This bot can download media from Youtube,\n\tSend a link to a video or playlist')
 
-@router.message(F.text.startswith('https://'))
-async def share_link(message):
-    url = message.text
-    await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(url))
-@router.callback_query(F.data.startswith('video_download'))
-async def chosen_video(callback: CallbackQuery):
-    url = callback.data.split()[1]
-    yt = YouTube(url)
-    streams = yt.streams
-    await callback.message.answer(url, reply_markup=await kb.inline_choice_resolution(streams))
+@router.message(F.text.startswith('https://www.youtube.com/'))
+async def share_link(message: Message):
+    try:
+        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
+    except Exception as ex:
+        print(ex)
 
+@router.message(F.text.startswith('https://youtu.be/'))
+async def share_link1(message: Message):
+    try:
+        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
+    except Exception as ex:
+        print(ex)
 
 @router.callback_query(F.data.startswith('audio_download'))
 async def send_audio(callback: CallbackQuery):
     await callback.answer('downloading audio')
-    url = callback.data.split()[1]
+    url = callback.message.reply_to_message.text
     yt = YouTube(url)
     try:
         stream = yt.streams.get_audio_only()
@@ -39,11 +41,10 @@ async def send_audio(callback: CallbackQuery):
         print(ex)
         return
 
-
-@router.callback_query(F.data.startswith('itag'))
+@router.callback_query(F.data.startswith('video'))
 async def send_media(callback: CallbackQuery):
     await callback.answer(f'downloading video')
-    url = callback.message.text
+    url = callback.message.reply_to_message.text
     yt = YouTube(url)
     try:
         itag = str(callback.data).split()[1]
