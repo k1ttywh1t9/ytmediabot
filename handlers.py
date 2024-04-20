@@ -18,8 +18,20 @@ async def share_link(message: Message):
         await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
     except Exception as ex:
         print(ex)
+@router.message(F.text.startswith('http://www.youtube.com/'))
+async def share_link(message: Message):
+    try:
+        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
+    except Exception as ex:
+        print(ex)
 
 @router.message(F.text.startswith('https://youtu.be/'))
+async def share_link1(message: Message):
+    try:
+        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
+    except Exception as ex:
+        print(ex)
+@router.message(F.text.startswith('http://youtu.be/'))
 async def share_link1(message: Message):
     try:
         await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
@@ -29,9 +41,9 @@ async def share_link1(message: Message):
 @router.callback_query(F.data.startswith('audio_download'))
 async def send_audio(callback: CallbackQuery):
     await callback.answer('downloading audio')
-    url = callback.message.reply_to_message.text
-    yt = YouTube(url)
     try:
+        url = callback.message.reply_to_message.text
+        yt = YouTube(url)
         stream = yt.streams.get_audio_only()
         title = yt.title
         path = downloader(stream, title, 'mp3')
@@ -44,9 +56,9 @@ async def send_audio(callback: CallbackQuery):
 @router.callback_query(F.data.startswith('video'))
 async def send_media(callback: CallbackQuery):
     await callback.answer(f'downloading video')
-    url = callback.message.reply_to_message.text
-    yt = YouTube(url)
     try:
+        url = callback.message.reply_to_message.text
+        yt = YouTube(url)
         itag = str(callback.data).split()[1]
         print(itag)
         stream = yt.streams.get_by_itag(itag)
