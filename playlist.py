@@ -15,12 +15,12 @@ async def send_playlist(callback: CallbackQuery):
         videos = Playlist(url).videos
         for yt in videos:
             try:
-                output_path = 'media\\playlist'
+                output_path = 'media/playlist'
                 title = yt.title
                 clear_title = re.sub(r'[^a-zA-Z0-9\s]+', '', title)
                 filename = f'{clear_title}.mp3'
                 yt.streams.get_audio_only().download(output_path=output_path, filename=filename)
-                path = f'{output_path}\\{filename}'
+                path = f'{output_path}/{filename}'
                 await callback.message.answer_audio(FSInputFile(path=path))
                 remove(path)
             except Exception as ex:
