@@ -15,7 +15,7 @@ async def send_playlist(callback: CallbackQuery):
         videos = Playlist(url).videos
         for yt in videos:
             try:
-                output_path = 'media/playlist'
+                output_path = 'data/media/playlist'
                 title = yt.title
                 clear_title = re.sub(r'[^a-zA-Z0-9\s]+', '', title)
                 filename = f'{clear_title}.mp3'
