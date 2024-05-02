@@ -7,7 +7,7 @@
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
 ARG PYTHON_VERSION=3.11.8
-FROM python:${PYTHON_VERSION}-slim as base
+FROM python:${PYTHON_VERSION}
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -34,18 +34,19 @@ RUN adduser \
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
 # Leverage a bind mount to requirements.txt to avoid having to copy them into
 # into this layer.
+
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
     python -m pip install -r requirements.txt
 
-# Switch to the non-privileged user to run the application.
-USER appuser
-
+# Switch to the privileged user to run the application.
+USER root
+RUN chmod -R 744 /app
 # Copy the source code into the container.
-COPY . .
+COPY . /app
 
 # Expose the port that the application listens on.
 EXPOSE 8000
 
 # Run the application.
-CMD python3 run.py
+CMD ["python3", "run.py"]
