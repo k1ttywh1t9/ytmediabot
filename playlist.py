@@ -1,11 +1,19 @@
 from os import remove
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message, FSInputFile
+import pytube
 from pytube.contrib.playlist import Playlist
 import re
 
-
 router_playlist = Router()
+
+
+def playlist_identifier(text: str):
+    if text.find('playlist') != -1:
+        return 'page'
+    if text.find('list=') != -1:
+        return 'list'
+
 
 @router_playlist.callback_query(F.data == 'playlist')
 async def send_playlist(callback: CallbackQuery):

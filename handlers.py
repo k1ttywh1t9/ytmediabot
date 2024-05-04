@@ -3,8 +3,10 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import CallbackQuery, Message, FSInputFile, MessageEntity
 import keyboards as kb
+import pytube
 from pytube import YouTube
 from utils import downloader
+from playlist import playlist_identifier
 
 router = Router()
 
@@ -15,26 +17,26 @@ async def cmd_start(message: Message):
 @router.message(F.text.startswith('https://www.youtube.com/'))
 async def share_link(message: Message):
     try:
-        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
+        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(playlist_identifier(message.text))))
     except Exception as ex:
         print(ex)
 @router.message(F.text.startswith('http://www.youtube.com/'))
 async def share_link(message: Message):
     try:
-        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
+        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(playlist_identifier(message.text))))
     except Exception as ex:
         print(ex)
 
 @router.message(F.text.startswith('https://youtu.be/'))
 async def share_link1(message: Message):
     try:
-        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
+        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(playlist_identifier(message.text))))
     except Exception as ex:
         print(ex)
 @router.message(F.text.startswith('http://youtu.be/'))
 async def share_link1(message: Message):
     try:
-        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(message.text.find('list=') or message.text.find('playlist'))))
+        await message.reply('What you want to download from this url?', reply_markup=await kb.choice_function(is_playlist=(playlist_identifier(message.text))))
     except Exception as ex:
         print(ex)
 
