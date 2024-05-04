@@ -7,6 +7,7 @@ import pytube
 from pytube import YouTube
 from utils import downloader
 from playlist import playlist_identifier
+from filesize_control import get_filesize_compared_to_limit, OversizingException
 
 router = Router()
 
@@ -53,7 +54,6 @@ async def send_audio(callback: CallbackQuery):
         remove(path)
     except Exception as ex:
         print(ex)
-        return
 
 @router.callback_query(F.data.startswith('video'))
 async def send_media(callback: CallbackQuery):
@@ -64,12 +64,14 @@ async def send_media(callback: CallbackQuery):
         itag = str(callback.data).split()[1]
         print(itag)
         stream = yt.streams.get_by_itag(itag)
+        await get_filesize_compared_to_limit(stream)
         title = yt.title
         path = downloader(stream, title, 'mp4')
         await callback.message.answer_video(FSInputFile(path=path))
         remove(path)
+    except OversizingException:
+        await callback.message.answer('size of your mediafile is too much (>50 Mb)')
     except Exception as ex:
         print(ex)
-        return
 
 
