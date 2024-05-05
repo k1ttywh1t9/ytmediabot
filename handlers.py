@@ -49,7 +49,7 @@ async def send_audio(callback: CallbackQuery):
         yt = YouTube(url)
         stream = yt.streams.get_audio_only()
         title = yt.title
-        path = downloader(stream, title, 'mp3')
+        path = await downloader(stream, title, 'mp3')
         await callback.message.answer_audio(FSInputFile(path=path))
         remove(path)
     except Exception as ex:
@@ -66,7 +66,7 @@ async def send_media(callback: CallbackQuery):
         stream = yt.streams.get_by_itag(itag)
         await get_filesize_compared_to_limit(stream)
         title = yt.title
-        path = downloader(stream, title, 'mp4')
+        path = await downloader(stream, title, 'mp4')
         await callback.message.answer_video(FSInputFile(path=path))
         remove(path)
     except OversizingException:

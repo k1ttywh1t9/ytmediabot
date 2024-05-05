@@ -4,6 +4,7 @@ from aiogram.types import CallbackQuery, Message, FSInputFile
 import pytube
 from pytube.contrib.playlist import Playlist
 import re
+from filesize_control import get_filesize_compared_to_limit, OversizingException
 
 router_playlist = Router()
 
@@ -27,10 +28,14 @@ async def send_playlist(callback: CallbackQuery):
                 title = yt.title
                 clear_title = re.sub(r'[^a-zA-Z0-9\s]+', '', title)
                 filename = f'{clear_title}.mp3'
-                yt.streams.get_audio_only().download(output_path=output_path, filename=filename)
+                stream = yt.streams.get_audio_only()
+                await get_filesize_compared_to_limit(stream)
+                stream.download(output_path=output_path, filename=filename)
                 path = f'{output_path}/{filename}'
                 await callback.message.answer_audio(FSInputFile(path=path))
                 remove(path)
+            except OversizingException:
+                await callback.message.answer(f'audio {title} is not downloaded, size of the file is bigger than 50 Mb')
             except Exception as ex:
                 print(ex)
     except Exception as ex:
